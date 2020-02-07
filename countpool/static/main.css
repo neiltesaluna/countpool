@@ -1,0 +1,37 @@
+
+/* f5eaea - tan */
+/* 7fcd91 - green */
+/* 5b5656 - gray */
+/* 4d4646 - black */
+
+
+
+.card-hover {
+  position: relative;
+  width: 50%;
+}
+
+
+.reveal {
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+
+}
+
+.card-hover:hover .reveal{
+  opacity: 1;
+}
+
+.reveal-text {
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
