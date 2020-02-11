@@ -1,0 +1,114 @@
+<div id="local_timer_js" class="row" </div>
+
+
+<script>
+
+var localTimers = JSON.parse(window.localStorage.getItem('localTimers')) || [];
+
+var inpKey = document.getElementById("local_title");
+var inpValue = document.getElementById("local_date");
+var btnInsert = document.getElementById("btnInsert");
+
+
+
+
+// ========================================================================
+
+// passing local storage data
+
+
+console.log(localTimers.length);
+
+
+
+function timerTemplate(timer) {
+
+  setTimer(timer.local_goal, 'local_id_'+timer.local_id);
+
+
+  return `
+  <div style="padding: 1rem">
+
+    <div class="card card-hover" style="width: 19.6rem; background-color: #5b5656;" data-toggle="modal" data-target="#Modal-${timer.local_id}">
+      <div class="reveal-text">
+        <h6 class="card-text">${timer.local_title}</h6>
+        <p class="card-text"id='local_id_${timer.local_id}'></p>
+      </div>
+      <div class="reveal">
+        <img src="{{ url_for('static', filename='bg-image/default-1.jpg') }}" class="img-fluid" alt="">
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="Modal-${timer.local_id}" tabindex="-1" role="dialog" aria-labelledby="Modal-${timer.local_id}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">${timer.local_title}</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+
+          <img src="{{ url_for('static', filename='bg-image/default-1.jpg') }}" class="img-fluid" alt="">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+          <a class="btn btn-danger" id="btnDelete" href="">delete</a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  `
+;
+
+}
+
+document.getElementById("local_timer_js").innerHTML = `
+  ${localTimers.map(timerTemplate).join("")}
+`;
+
+
+
+
+
+
+// ========================================================================
+
+
+// creating a new timer on form completion
+btnInsert.onclick = function () {
+  var local_title = inpKey.value;
+  var local_date = inpValue.value;
+
+  if (local_title && local_date) {
+
+
+    var form_timer = {
+    "local_title": local_title,
+    "local_goal": local_date,
+    "local_id": localTimers.length,
+    }
+
+    append_timer(form_timer)
+
+  }
+  location.reload()
+
+};
+
+// appending a new timer
+
+function append_timer(new_timer) {
+
+
+  localTimers.push(new_timer);
+  localStorage.setItem('localTimers', JSON.stringify(localTimers));
+
+}
+
+</script>

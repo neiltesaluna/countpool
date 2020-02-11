@@ -2,7 +2,7 @@ from countpool import app, db
 from flask import render_template, url_for, redirect
 from countpool.forms import NewTimer
 from countpool.models import Timer
-from datetime import datetime
+
 
 
 @app.route("/", methods=['GET', 'POST'])
@@ -14,14 +14,11 @@ def home():
     form = NewTimer()
 
     if form.validate_on_submit():
-        #transform input to a datetime format (flask)
-        form_date=datetime.strptime(str(form.date.data), "%Y-%m-%d")
-
-        #transform format to something javascript will understand
-        tojs=form_date.strftime("%b %d, %Y %H:%M:%S")
+        
+        goal = form.date.data
 
         # adding the form fields to the database
-        new_timer = Timer(title=form.title.data, goal=tojs)
+        new_timer = Timer(title=form.title.data, goal=goal)
         db.session.add(new_timer)
         db.session.commit()
 

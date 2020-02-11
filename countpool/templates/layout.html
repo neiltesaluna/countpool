@@ -16,7 +16,6 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-  <link rel="manifest" href="/site.webmanifest">
 
   <title>countpool</title>
 </head>
@@ -27,6 +26,7 @@
       <img src="{{ url_for('static', filename='favicon/favicon-32x32.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
       countpool
 
+      <a class="btn btn-primary" data-toggle="modal" data-target="#local_newtimeModal">Local New Timer</a>
       <a class="btn btn-success" data-toggle="modal" data-target="#newtimeModal">New Timer</a>
     </a>
   </nav>
