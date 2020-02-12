@@ -21,15 +21,26 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-dark bg-dark">
+
+  <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
     <a class="navbar-brand" href="#">
       <img src="{{ url_for('static', filename='favicon/favicon-32x32.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
-      countpool
-
-      <a class="btn btn-primary" data-toggle="modal" data-target="#local_newtimeModal">Local New Timer</a>
-      <a class="btn btn-success" data-toggle="modal" data-target="#newtimeModal">New Timer</a>
+    countpool
     </a>
-  </nav>
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="btn btn-primary" data-toggle="modal" data-target="#local_newtimeModal">Local New Timer</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-success" data-toggle="modal" data-target="#newtimeModal">New Timer</a>
+        </li>
+      </ul>
+    </nav>
 
 
   {% block content %}{% endblock content %}
