@@ -5,51 +5,64 @@
 
 var localTimers = JSON.parse(window.localStorage.getItem('localTimers')) || [];
 
+
+// used to delete the local timer
+
+
+function delete_localtimer(local_id) {
+  delete localTimers[local_id]
+  localStorage.setItem('localTimers', JSON.stringify(localTimers));
+    if (localTimers.every(element => element === null)) {
+      localStorage.removeItem("localTimers")
+    }
+  location.reload()
+}
+
 // passing local storage data
 
 function timerTemplate(timer) {
 
-  setTimer(timer.local_goal, 'local_id_'+timer.local_id);
+  if (timer){
+    setTimer(timer.local_goal, 'local_id_'+timer.local_id);
 
+    return `
+    <div style="padding: 1rem">
 
-  return `
-  <div style="padding: 1rem">
-
-    <div class="card card-hover" style="width: 19.6rem; background-color: #5b5656;" data-toggle="modal" data-target="#Modal-${timer.local_id}">
-      <div class="reveal-text">
-        <h6 class="card-text">${timer.local_title}</h6>
-        <p class="card-text"id='local_id_${timer.local_id}'></p>
-      </div>
-      <div class="reveal">
-        <img src="{{ url_for('static', filename='bg-image/default-1.jpg') }}" class="img-fluid" alt="">
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal -->
-  <div class="modal fade" id="Modal-${timer.local_id}" tabindex="-1" role="dialog" aria-labelledby="Modal-${timer.local_id}" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">${timer.local_title}</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">×</span>
-          </button>
+      <div class="card card-hover" style="width: 19.6rem; background-color: #5b5656;" data-toggle="modal" data-target="#Modal-${timer.local_id}">
+        <div class="reveal-text">
+          <h6 class="card-text">${timer.local_title}</h6>
+          <p class="card-text"id='local_id_${timer.local_id}'></p>
         </div>
-        <div class="modal-body mx-auto">
-
-          <img src="{{ url_for('static', filename='bg-image/default-1.jpg') }}" class="rounded img-fluid" alt="">
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-          <a class="btn btn-danger" id="btnDelete" href="">delete</a>
-
+        <div class="reveal">
+          <img src="{{ url_for('static', filename='bg-image/default-1.jpg') }}" class="img-fluid" alt="">
         </div>
       </div>
     </div>
-  </div>
-  `
+
+    <!-- Modal -->
+    <div class="modal fade" id="Modal-${timer.local_id}" tabindex="-1" role="dialog" aria-labelledby="Modal-${timer.local_id}" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">${timer.local_title}</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body mx-auto">
+
+            <img src="{{ url_for('static', filename='bg-image/default-1.jpg') }}" class="rounded img-fluid" alt="">
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+            <button onclick="delete_localtimer(${timer.local_id})" class="btn btn-danger">delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    `
+  }
 ;
 
 }
