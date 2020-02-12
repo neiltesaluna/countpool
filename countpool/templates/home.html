@@ -4,13 +4,16 @@
 
 <div class="container">
 
-  {% include "newtimer.html"%}
+  {% include "script_countdown.html" %}
+  {% include "db_newtimer.html"%}
   {% include "local_newtimer.html"%}
 
-  {% include "timer.html"%}
+  <div class="row" style="padding:15px">
+  {% include "local_timer.html" %}
+  {% include "db_timer.html"%}
+  </div>
 
-  {% include "script_countdown.html" %}
-  {% include "script_localstorage.html" %}
+
 
 
 </div>

@@ -1,25 +1,11 @@
-<div id="local_timer_js" class="row" </div>
+<div id="local_timer_js" class="row" style="padding:15px"</div>
 
 
 <script>
 
 var localTimers = JSON.parse(window.localStorage.getItem('localTimers')) || [];
 
-var inpKey = document.getElementById("local_title");
-var inpValue = document.getElementById("local_date");
-var btnInsert = document.getElementById("btnInsert");
-
-
-
-
-// ========================================================================
-
 // passing local storage data
-
-
-console.log(localTimers.length);
-
-
 
 function timerTemplate(timer) {
 
@@ -71,44 +57,5 @@ function timerTemplate(timer) {
 document.getElementById("local_timer_js").innerHTML = `
   ${localTimers.map(timerTemplate).join("")}
 `;
-
-
-
-
-
-
-// ========================================================================
-
-
-// creating a new timer on form completion
-btnInsert.onclick = function () {
-  var local_title = inpKey.value;
-  var local_date = inpValue.value;
-
-  if (local_title && local_date) {
-
-
-    var form_timer = {
-    "local_title": local_title,
-    "local_goal": local_date,
-    "local_id": localTimers.length,
-    }
-
-    append_timer(form_timer)
-
-  }
-  location.reload()
-
-};
-
-// appending a new timer
-
-function append_timer(new_timer) {
-
-
-  localTimers.push(new_timer);
-  localStorage.setItem('localTimers', JSON.stringify(localTimers));
-
-}
 
 </script>

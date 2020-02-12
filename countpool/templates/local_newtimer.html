@@ -1,31 +1,74 @@
-  <!-- Modal -->
-  <div class="modal fade" id="local_newtimeModal" tabindex="-1" role="dialog" aria-labelledby="local_newtimeModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">New Timer</h4>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+<!-- Modal -->
+<div class="modal fade" id="local_newtimeModal" tabindex="-1" role="dialog" aria-labelledby="local_newtimeModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">New Timer</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="form-group">
+          <p class="form-control-label">Timer</p>
+          <input id=local_title class="form-control form-control-lg" type="text">
         </div>
-        <div class="modal-body">
 
-            <div class="form-group">
-              <p class="form-control-label">Timer</p>
-              <input id=local_title class="form-control form-control-lg" type="text">
-            </div>
+        <div class="form-group">
+          <p class="form-control-label">Date</p>
+          <input id=local_date class="form-control form-control-lg" type="date">
+        </div>
 
-            <div class="form-group">
-              <p class="form-control-label">Date</p>
-              <input id=local_date class="form-control form-control-lg" type="date">
-            </div>
-
-            <div class="modal-footer">
-              <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-              <button id=btnInsert class="btn btn-primary" type="button">New Timer</button>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+          <button id=btnInsert class="btn btn-primary" type="button">New Timer</button>
 
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+
+var localTimers = JSON.parse(window.localStorage.getItem('localTimers')) || [];
+
+var inpKey = document.getElementById("local_title");
+var inpValue = document.getElementById("local_date");
+var btnInsert = document.getElementById("btnInsert");
+
+
+
+// creating a new timer on form completion
+btnInsert.onclick = function () {
+  var local_title = inpKey.value;
+  var local_date = inpValue.value;
+
+  if (local_title && local_date) {
+
+
+    var form_timer = {
+    "local_title": local_title,
+    "local_goal": local_date,
+    "local_id": localTimers.length,
+    }
+
+    append_timer(form_timer)
+
+  }
+  location.reload()
+
+};
+
+// appending a new timer
+
+function append_timer(new_timer) {
+
+
+  localTimers.push(new_timer);
+  localStorage.setItem('localTimers', JSON.stringify(localTimers));
+
+}
+
+</script>
