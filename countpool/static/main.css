@@ -39,4 +39,5 @@
 .navbar-nav > li{
   padding-left: 0.1rem;
   padding-right: 0.1rem;
+  cursor: pointer;
 }
