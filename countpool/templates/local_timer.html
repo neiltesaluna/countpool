@@ -1,13 +1,23 @@
-<div id="local_timer_js"</div>
+<div id="local_timer_js" class="row mx-auto"</div>
 
 
 <script>
 
-var localTimers = JSON.parse(window.localStorage.getItem('localTimers')) || [];
 
+// used to sort the timers by date
+
+function asc(a, b) {
+
+  let asc = 0;
+  if (a.local_goal > b.local_goal) {
+    asc = 1;
+  } else if (a.local_goal < b.local_goal) {
+    asc = -1;
+  }
+  return asc;
+}
 
 // used to delete the local timer
-
 
 function delete_localtimer(local_id) {
   delete localTimers[local_id]
@@ -17,6 +27,12 @@ function delete_localtimer(local_id) {
     }
   location.reload()
 }
+
+// passing in the localStorage timers and sorting them
+
+var localTimers = JSON.parse(window.localStorage.getItem('localTimers')) || [];
+localTimers.sort(asc);
+
 
 // passing local storage data
 
