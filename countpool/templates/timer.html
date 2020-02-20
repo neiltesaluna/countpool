@@ -19,29 +19,36 @@ function asc(a, b) {
 
 // used to delete the local timer
 
-function delete_localtimer(id) {
-  delete localTimers[id]
-  localStorage.setItem('localTimers', JSON.stringify(localTimers));
-    if (localTimers.every(element => element === null)) {
-      localStorage.removeItem("localTimers")
-    }
-  location.reload()
+function delete_localtimer(id, local_check) {
+  if (local_check === "True") {
+    var [_, id] = id.split('local_');
+    delete localTimers[id]
+    localStorage.setItem('localTimers', JSON.stringify(localTimers));
+      if (localTimers.every(element => element === null)) {
+        localStorage.removeItem("localTimers")
+      }
+    location.reload()
+  }
+
+  else {
+    window.location.href = "{{ url_for('delete_timer', id='pass_id') }}".replace('pass_id', id)
+  }
 }
 
-// passing in the dbTimers + localStorage timers, merge and sort
+// passing in the dbTimers, localStorage timers, merge and sort
 
 var dbTimers = {{ timers | tojson }}
 console.log(dbTimers)
 var localTimers = JSON.parse(window.localStorage.getItem('localTimers')) || [];
 console.log(localTimers)
 
-// // merging timers stored in the database and local storage
-// localTimers = localTimers.concat(dbTimers)
-//
-// // removing null objects before sorting the timers
-// localTimers = localTimers.filter((obj) => obj )
-// localTimers.sort(asc);
-// console.log(localTimers)
+// merging timers stored in the database and local storage
+combinedTimers = localTimers.concat(dbTimers)
+
+// removing null objects before sorting the timers
+combinedTimers = combinedTimers.filter((obj) => obj )
+combinedTimers.sort(asc);
+console.log(combinedTimers)
 
 
 // passing local storage data
@@ -82,7 +89,7 @@ function timerTemplate(timer) {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-            <button onclick="delete_localtimer(${timer.id})" class="btn btn-danger">delete</button>
+            <button onclick="delete_localtimer('${timer.id}','${timer.local_check}')" class="btn btn-danger">delete</button>
           </div>
         </div>
       </div>
@@ -94,7 +101,7 @@ function timerTemplate(timer) {
 }
 
 document.getElementById("local_timer_js").innerHTML = `
-  ${localTimers.map(timerTemplate).join("")}
+  ${combinedTimers.map(timerTemplate).join("")}
 `;
 
 </script>

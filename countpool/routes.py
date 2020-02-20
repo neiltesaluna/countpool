@@ -29,10 +29,10 @@ def home():
 
     return render_template("home.html", form=form, timers=timers)
 
-@app.route('/<int:id>/delete')
+@app.route('/<id>/delete')
 def delete_timer(id):
 
-    timer = Timer.query.get(id)
+    timer = Timer.query.get(int(id))
 
     if timer is None:
         return redirect(url_for('home'))
