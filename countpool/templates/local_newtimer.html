@@ -55,9 +55,9 @@ function submit_localtimer () {
 
 
     var form_timer = {
-    "local_title": local_title,
-    "local_goal": local_date,
-    "local_id": localTimers.length,
+    "title": local_title,
+    "goal": local_date,
+    "id": "local "+localTimers.length,
     }
 
     append_timer(form_timer)
