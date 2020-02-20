@@ -67,7 +67,7 @@ function timerTemplate(timer) {
           <p class="card-text"id='${timer.id}'></p>
         </div>
         <div class="reveal">
-          <img src="{{ url_for('static', filename='bg-image/default-2.jpg') }}" class="img-fluid" alt="">
+          <img src="{{ url_for('static', filename='bg-image/') }}${timer.image}" class="img-fluid" alt="">
         </div>
       </div>
     </div>
@@ -84,7 +84,7 @@ function timerTemplate(timer) {
           </div>
           <div class="modal-body mx-auto">
 
-            <img src="{{ url_for('static', filename='bg-image/default-2.jpg') }}" class="rounded img-fluid" alt="">
+            <img src="{{ url_for('static', filename='bg-image/') }}${timer.image}" class="rounded img-fluid" alt="">
 
           </div>
           <div class="modal-footer">
