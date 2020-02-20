@@ -57,7 +57,8 @@ function submit_localtimer () {
     var form_timer = {
     "title": local_title,
     "goal": local_date,
-    "id": "local "+localTimers.length,
+    "id": localTimers.length,
+    "image": "default-2.jpg"
     }
 
     append_timer(form_timer)

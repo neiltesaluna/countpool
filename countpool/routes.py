@@ -1,5 +1,5 @@
 from countpool import app, db
-from flask import render_template, url_for, redirect
+from flask import render_template, url_for, redirect, request, jsonify
 from countpool.forms import NewTimer
 from countpool.models import Timer
 
@@ -10,11 +10,14 @@ from countpool.models import Timer
 
 def home():
 
-    timers = Timer.query.order_by(Timer.goal).all()
-    form = NewTimer()
+    # converting database query to dictionary
+    timers = [row.__dict__ for row in Timer.query.all()]
+    for item in timers:
+        item.pop('_sa_instance_state')
 
+    form = NewTimer()
     if form.validate_on_submit():
-        
+
         goal = form.date.data
 
         # adding the form fields to the database
