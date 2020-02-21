@@ -4,41 +4,28 @@
 /* 5b5656 - gray */
 /* 4d4646 - black */
 
-
-
-.card-hover {
-  position: relative;
-  width: 19.6rem;
-  background-color: #5b5656;
-}
-
-
-.reveal {
-  height: 100%;
-  width: 100%;
-  opacity: 0;
-  transition: .5s ease;
-
-}
-
-.card-hover:hover .reveal{
-  opacity: 1;
-}
-
-.reveal-text {
-  color: white;
-  font-size: 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -webkit-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  text-align: center;
-}
-
 .navbar-nav > li{
   padding-left: 0.1rem;
   padding-right: 0.1rem;
   cursor: pointer;
+}
+
+.jumbotron {
+  background-color: #fff;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.title-text {
+  font-size:10vw
+}
+
+.timer-text {
+  font-size:4vw
+}
+
+.modal-dialog {
+  max-width: 378px
 }
