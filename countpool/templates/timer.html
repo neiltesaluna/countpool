@@ -27,7 +27,7 @@ function delete_localtimer(id, local_check) {
       if (localTimers.every(element => element === null)) {
         localStorage.removeItem("localTimers")
       }
-    location.reload()
+    document.location.href="/";
   }
 
   else {
@@ -56,13 +56,18 @@ console.log(combinedTimers)
 function timerTemplate(timer) {
 
   if (timer){
-    setTimer(timer.goal, timer.id);
+    setTimer(timer.goal, timer.id, timer.date_created);
 
     return `
     <div class="jumbotron clickable" data-toggle="modal" data-target="#Modal-${timer.id}">
       <div class="text-black text-center py-5 px-4">
         <h1 class="display-1 title-text"><strong>${timer.title}</strong></h1>
-        <p class="lead timer-text"id='${timer.id}'></p>
+        <p class="lead timer-text" id='${timer.id}'></p>
+        <div class="progress">
+          <div class="progress-bar" id='bar_${timer.id}'role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 100%;">
+            <span class="sr-only"></span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -78,7 +83,7 @@ function timerTemplate(timer) {
             </button>
           </div>
           <div class="mx-auto">
-            <img src="{{ url_for('static', filename='bg-image/') }}${timer.image}" class="img-fluid" alt="">
+            <img src="static/bg-image/${timer.image}" class="img-fluid" alt="">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
