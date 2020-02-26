@@ -2,6 +2,7 @@ from countpool import app, db
 from flask import render_template, url_for, redirect, request, jsonify
 from countpool.forms import NewTimer
 from countpool.models import Timer
+from datetime import datetime
 
 
 
@@ -18,10 +19,10 @@ def home():
     form = NewTimer()
     if form.validate_on_submit():
 
-        goal = form.date.data
+        date_created = datetime.today().strftime('%Y-%m-%d')
 
         # adding the form fields to the database
-        new_timer = Timer(title=form.title.data, goal=goal)
+        new_timer = Timer(title=form.title.data, goal=form.date.data, date_created = date_created)
         db.session.add(new_timer)
         db.session.commit()
 
