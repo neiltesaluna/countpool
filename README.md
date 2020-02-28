@@ -7,3 +7,12 @@ To display the timers to the user, these two data structures are then merged and
 JavaScript is also used to countdown the timers displayed.
 
 This project is using the **Flask web framework** and also incorporates **Bootstrap** styling.
+
+
+## installation
+
+To install the dependencies for this project, while in the root folder enter
+<code>pip install -r requirements.txt</code>
+
+Then you'll be able to run the project using
+<code>python run.py</code>
