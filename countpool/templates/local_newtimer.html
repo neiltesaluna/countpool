@@ -10,7 +10,7 @@
       </div>
       <div class="modal-body">
 
-        <form id="form_localtimer" action="#">
+        <form id="form_localtimer">
 
         <div class="form-group">
           <label class="form-control-label">Timer</label>
@@ -75,6 +75,7 @@ var local_imgdata = document.getElementById("img_name");
 // creating a new timer on form completion
 document.getElementById("form_localtimer").onsubmit = function() {
   submit_localtimer()
+  window.location.reload();
 };
 
 function submit_localtimer () {
@@ -99,22 +100,15 @@ function submit_localtimer () {
     "local_check" : "True",
     "date_created" : year + "-" + mon + "-" + day
     }
-
     append_timer(form_timer)
-
   }
-  document.location.href="/";
-
 };
 
 // appending a new timer
 
 function append_timer(new_timer) {
-
-
   localTimers.push(new_timer);
   localStorage.setItem('localTimers', JSON.stringify(localTimers));
-
 }
 
 </script>
