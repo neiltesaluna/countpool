@@ -19,6 +19,10 @@ Then initialize the docker container by entering the command: <code>docker run -
 
 Access the website using http://0.0.0.0:5000/
 
+#### NOTE
+If you want to see changes to the APP while you edit, you need to enter this command instead: <code>docker run -p 5000:5000 -v [PROJECT FULL PATH]/countpool-experimental:/usr/src/app countpool</code>
+*Volumes just gives the ability for the container to see files on the host machine*
+
 
 ## CMD
 *it is strongly suggested to use virtualenv before installing the dependencies*
