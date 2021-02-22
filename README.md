@@ -9,7 +9,7 @@ JavaScript is also used to countdown the timers displayed.
 This project is using the **Flask web framework** and also incorporates **Bootstrap** styling.
 
 
-## installation
+# installation
 
 
 ##DOCKER
