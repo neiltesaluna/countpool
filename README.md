@@ -23,7 +23,7 @@ Access the website using http://0.0.0.0:5000/
 
 #### NOTE
 If you want to see changes to the APP while you edit, you need to enter this command instead:<br />
-<code>docker run -p 5000:5000 -v [PROJECT FULL PATH]/countpool-experimental:/usr/src/app countpool</code><br />
+<code>docker run -p 5000:5000 -v [PROJECT FULL PATH]/countpool-experimental:/usr/src/app countpool</code><br /><br />
 *Volumes just gives the ability for the container to see files on the host machine*
 
 
