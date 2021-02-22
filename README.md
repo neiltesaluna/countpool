@@ -15,7 +15,7 @@ This project is using the **Flask web framework** and also incorporates **Bootst
 ## DOCKER
 To run this project using docker, in your terminal enter to build the docker image: <code>docker build -t countpool .</code>
 
-Then run initialize the docker container by entering the command: <code>docker run -p 5000:5000 countpool</code>
+Then initialize the docker container by entering the command: <code>docker run -p 5000:5000 countpool</code>
 
 Access the website using http://0.0.0.0:5000/
 
