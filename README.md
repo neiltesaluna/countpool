@@ -9,10 +9,10 @@ JavaScript is also used to countdown the timers displayed.
 This project is using the **Flask web framework** and also incorporates **Bootstrap** styling.
 
 
-# installation
+# Installation
 
 
-##DOCKER
+## DOCKER
 To run this project using docker, in your terminal enter to build the docker image.
 <code>docker build -t countpool .</code>
 
@@ -22,8 +22,9 @@ Then run initialize the docker container by entering the command
 Access the website using http://0.0.0.0:5000/
 
 
-##CMD
+## CMD
 *it is strongly suggested to use virtualenv before installing the dependencies*
+
 To install the dependencies for this project, while in the root folder enter
 <code>pip install -r requirements.txt</code>
 
