@@ -1,13 +1,12 @@
 <script>
 
-  function setTimer(end_date, timer_id, date_created) {
+  function setTimer(end_date, timer_id) {
 
     // count per second
     var timer_countdown = setInterval(function() {
 
       var current_date = new Date().getTime()
       var end_date_ms = new Date(end_date).getTime()
-      var date_created_ms = new Date(date_created).getTime()
 
       // count_diff between
       var count_diff = end_date_ms - current_date;
@@ -18,35 +17,47 @@
       var hours = Math.floor((count_diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       var minutes = Math.floor((count_diff % (1000 * 60 * 60)) / (1000 * 60));
       var seconds = Math.floor((count_diff % (1000 * 60)) / 1000);
-
-      // result for html
-      document.getElementById(timer_id).innerHTML = days + "d " + hours + "h "
-      + minutes + "m " + seconds + "s ";
+      var m_seconds = Math.floor(count_diff % 1000);
 
 
-      date_percent = ((current_date - end_date_ms) / (date_created_ms - end_date_ms)) * 100
+      // text fields for timer calculations
+      var days_text;
 
-      $('#bar_' + timer_id).css('width', date_percent+'%');
-
-      if (date_percent >= 90) {
-        $('#bar_' + timer_id).addClass("bg-danger");
+      if (days > 1) {
+        days_text = days + " days ";
       }
-      else if (date_percent >= 60 && date_percent < 90) {
-        $('#bar_' + timer_id).removeClass("bg-danger").addClass("bg-warning");
-      }
-      else if (date_percent >= 30 && date_percent < 60) {
-        $('#bar_' + timer_id).removeClass("bg-warning").addClass("bg-info");
+      else if (days == 1){
+        days_text = days + " day ";
       }
       else {
-        $('#bar_' + timer_id).removeClass("bg-info").addClass("bg-success");
+        days_text = "";
       }
+
+      var hr_text;
+
+      if (hours > 1) {
+        hr_text = hours + " hours ";
+      }
+      else if (hours == 1){
+        hr_text = hours + " hour ";
+      }
+      else {
+        hr_text = "";
+      }
+
+
+      // result for html
+      document.getElementById(timer_id).innerHTML = days_text + hr_text;
+      document.getElementById("minsec_"+timer_id).innerHTML = minutes + " m " + seconds + " s ";
+      document.getElementById("milsec_"+timer_id).innerHTML = m_seconds;
+
 
       // when timer reaches 0
       if (count_diff < 0) {
         clearInterval(timer_countdown);
         document.getElementById(timer_id).innerHTML = "count finished on "+end_date;
       }
-    }, 1000);
+    }, 1);
   }
 
 </script>
