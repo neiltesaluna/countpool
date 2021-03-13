@@ -1,6 +1,6 @@
 <script>
 
-  function setTimer(end_date, timer_id) {
+  function setTimer(end_date, timer_id, timer_image) {
 
     // count per second
     var timer_countdown = setInterval(function() {
@@ -49,10 +49,12 @@
 
       // result for html
       if (timer_id.toString().includes("local")) {
-        document.getElementById("colour_"+timer_id).style.color = '#7fcd91'
+        document.getElementById("colour_"+timer_id).style.color = '#7fcd91';
+        document.getElementById("image_"+timer_id).innerHTML = '<img src="static/bg-image/'+timer_image+'" class="img-fluid" alt="">';
       }
       else {
-        document.getElementById("colour_"+timer_id).style.color = '#5b5656'
+        document.getElementById("colour_"+timer_id).style.color = '#5b5656';
+        document.getElementById("image_"+timer_id).innerHTML = 'This is from the database!'
       }
 
       document.getElementById(timer_id).innerHTML = days_text + hr_text;

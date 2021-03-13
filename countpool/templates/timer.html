@@ -55,7 +55,7 @@ console.log(combinedTimers)
 function timerTemplate(timer) {
 
   if (timer){
-    setTimer(timer.goal, timer.id);
+    setTimer(timer.goal, timer.id, timer.image);
 
     return `
     <div class="jumbotron clickable" data-toggle="modal" data-target="#Modal-${timer.id}">
@@ -82,8 +82,7 @@ function timerTemplate(timer) {
               <span aria-hidden="true">×</span>
             </button>
           </div>
-          <div class="mx-auto">
-            <img src="static/bg-image/${timer.image}" class="img-fluid" alt="">
+          <div class="mx-auto"id='image_${timer.id}'>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
