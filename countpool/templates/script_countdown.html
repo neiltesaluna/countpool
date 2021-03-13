@@ -46,7 +46,15 @@
       }
 
 
+
       // result for html
+      if (timer_id.toString().includes("local")) {
+        document.getElementById("colour_"+timer_id).style.color = '#7fcd91'
+      }
+      else {
+        document.getElementById("colour_"+timer_id).style.color = '#5b5656'
+      }
+
       document.getElementById(timer_id).innerHTML = days_text + hr_text;
       document.getElementById("minsec_"+timer_id).innerHTML = minutes + " m " + seconds + " s ";
       document.getElementById("milsec_"+timer_id).innerHTML = m_seconds;
