@@ -19,7 +19,7 @@ function asc(a, b) {
 
 // used to delete the local timer
 
-function delete_localtimer(id, local_check) {
+function delete_timer(id, local_check) {
   if (local_check === "True") {
     var [_, id] = id.split('local_');
     delete localTimers[id]
@@ -29,7 +29,6 @@ function delete_localtimer(id, local_check) {
       }
     document.location.href="/";
   }
-
   else {
     window.location.href = "{{ url_for('delete_timer', id='pass_id') }}".replace('pass_id', id)
   }
@@ -88,7 +87,7 @@ function timerTemplate(timer) {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-            <button onclick="delete_localtimer('${timer.id}','${timer.local_check}')" class="btn btn-danger">delete</button>
+            <button onclick="delete_timer('${timer.id}','${timer.local_check}')" class="btn btn-danger">delete</button>
           </div>
         </div>
       </div>
