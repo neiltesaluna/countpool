@@ -19,8 +19,8 @@ function asc(a, b) {
 
 // used to delete the local timer
 
-function delete_timer(id, local_check) {
-  if (local_check === "True") {
+function delete_timer(id) {
+  if (id.toString().includes("local")) {
     var [_, id] = id.split('local_');
     delete localTimers[id]
     localStorage.setItem('localTimers', JSON.stringify(localTimers));
@@ -86,7 +86,7 @@ function timerTemplate(timer) {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
-            <button onclick="delete_timer('${timer.id}','${timer.local_check}')" class="btn btn-danger">delete</button>
+            <button onclick="delete_timer('${timer.id}')" class="btn btn-danger">delete</button>
           </div>
         </div>
       </div>
