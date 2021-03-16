@@ -57,13 +57,13 @@
         document.getElementById("image_"+timer_id).innerHTML = 'This is from the database!'
       }
 
-      document.getElementById(timer_id).innerHTML = days_text + hr_text;
-      document.getElementById("minsec_"+timer_id).innerHTML = minutes + " m " + seconds + " s ";
-      document.getElementById("milsec_"+timer_id).innerHTML = m_seconds;
-
-
       // when timer reaches 0
-      if (count_diff < 0) {
+      if (count_diff > 0) {
+        document.getElementById(timer_id).innerHTML = days_text + hr_text;
+        document.getElementById("minsec_"+timer_id).innerHTML = minutes + " m " + seconds + " s ";
+        document.getElementById("milsec_"+timer_id).innerHTML = m_seconds;
+      }
+      else {
         clearInterval(timer_countdown);
         document.getElementById(timer_id).innerHTML = "count finished on "+end_date;
 
