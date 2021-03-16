@@ -68,7 +68,7 @@
         document.getElementById(timer_id).innerHTML = "count finished on "+end_date;
 
         // timer delete after 3 days
-        setTimeout(delete_timer(timer_id), 259200000);
+        setTimeout(function(){ delete_timer(timer_id); }, 259200000);
       }
     }, 1);
   }
