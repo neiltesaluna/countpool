@@ -45,6 +45,11 @@
         hr_text = "";
       }
 
+      var end_month = new Date(end_date).getMonth() + 1
+      if (end_month < 10) {
+        end_month = '0' + end_month;
+      }
+
 
 
       // result for html
@@ -65,7 +70,9 @@
       }
       else {
         clearInterval(timer_countdown);
-        document.getElementById(timer_id).innerHTML = "count finished on "+end_date;
+        document.getElementById("minsec_"+timer_id).innerHTML = "";
+        document.getElementById("milsec_"+timer_id).innerHTML = "";
+        document.getElementById(timer_id).innerHTML = `count finished on ${new Date(end_date).getFullYear()}-${end_month}-${new Date(end_date).getDate()}`;
 
         // timer delete after 3 days
         setTimeout(function(){ delete_timer(timer_id); }, 259200000);
