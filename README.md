@@ -30,10 +30,19 @@ If you want to see changes to the APP while you edit, you need to enter this com
 
 
 ## CMD
-*it is strongly suggested to use virtualenv before installing the dependencies*
+First we need to install the dependencies into a virtual environment, while in the project root:<br />`python3 -m venv env`
 
-To install the dependencies for this project, while in the root folder enter: `pip install -r requirements.txt`
+Now we need to activate the virtual environment using:<br />`source env/bin/activate`
 
-Then you'll be able to run the project using: `python3 run.py`
+You can confirm if you're in the virtual environment using:<br />`which python`
+
+Now we can install the dependencies for this project in the virtual environment using:<br />`pip install -r requirements.txt`
+
+Then you'll be able to run the project using:<br />`python3 run.py`
 
 Access the website using http://0.0.0.0:5000/
+
+to deactivate the virtual environment simply use:<br />
+`deactivate`
+
+You can confirm if you're out of the virtual environment using:<br />`which python`
