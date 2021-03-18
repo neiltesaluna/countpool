@@ -19,38 +19,23 @@
       var seconds = Math.floor((count_diff % (1000 * 60)) / 1000);
       var m_seconds = Math.floor(count_diff % 1000);
 
-
-      // text fields for timer calculations
-      var days_text;
-
-      if (days > 1) {
-        days_text = days + " days ";
-      }
-      else if (days == 1){
-        days_text = days + " day ";
-      }
-      else {
-        days_text = "";
-      }
-
-      var hr_text;
-
-      if (hours > 1) {
-        hr_text = hours + " hours ";
-      }
-      else if (hours == 1){
-        hr_text = hours + " hour ";
-      }
-      else {
-        hr_text = "";
-      }
-
       var end_month = new Date(end_date).getMonth() + 1
       if (end_month < 10) {
         end_month = '0' + end_month;
       }
 
-
+      // text fields for timer calculations, timer_text is the required string to show
+      function timerValue(timer_value, timer_text) {
+        if (timer_value > 1) {
+          return `${timer_value} ${timer_text}s`;
+        }
+        else if (timer_value == 1) {
+          return `${timer_value} ${timer_text}`;
+        }
+        else {
+          return "";
+        }
+      }
 
       // result for html
       if (timer_id.toString().includes("local")) {
@@ -64,13 +49,12 @@
 
       // when timer reaches 0
       if (count_diff > 0) {
-        document.getElementById(timer_id).innerHTML = days_text + hr_text;
-        document.getElementById("minsec_"+timer_id).innerHTML = minutes + " m " + seconds + " s ";
-        document.getElementById("milsec_"+timer_id).innerHTML = m_seconds;
+        document.getElementById(timer_id).innerHTML = `${timerValue(days, "day")} ${timerValue(hours, "hour")}`;
+        document.getElementById("minsec_"+timer_id).innerHTML = `${timerValue(minutes, "minute")} ${timerValue(seconds, "second")}`;
+        document.getElementById("milsec_"+timer_id).innerHTML = count_diff > 0 ? m_seconds : "";
       }
       else {
         clearInterval(timer_countdown);
-        document.getElementById("minsec_"+timer_id).innerHTML = "";
         document.getElementById("milsec_"+timer_id).innerHTML = "";
         document.getElementById(timer_id).innerHTML = `count finished on ${new Date(end_date).getFullYear()}-${end_month}-${new Date(end_date).getDate()}`;
 
