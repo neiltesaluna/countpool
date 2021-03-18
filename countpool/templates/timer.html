@@ -27,7 +27,7 @@ function delete_timer(id) {
       if (localTimers.every(element => element === null)) {
         localStorage.removeItem("localTimers")
       }
-    window.location.reload();
+    document.location.href="/";
   }
   else {
     window.location.href = "{{ url_for('delete_timer', id='pass_id') }}".replace('pass_id', id)
