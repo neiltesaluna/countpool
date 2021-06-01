@@ -6,7 +6,7 @@ JavaScript handles the timers stored locally, whereas Python is used for timers 
 To display the timers to the user, these two data structures are then merged and ordered using JavaScript.
 JavaScript is also used to countdown the timers displayed.
 
-This project is using the **Flask web framework** and also incorporates **Bootstrap** styling. **Nginx** is used as a Webserver, **Gunicorn** as a WSGI and is hosted on an **EC2 Instance** on AWS.
+This project is using the **Flask web framework** and also incorporates **Bootstrap** styling. **Nginx** is used as a Webserver, **Gunicorn** as a WSGI, hosted on an **EC2 Instance** and is using **MySQL RDS** on AWS.
 
 https://countpool.tesaluna.com/
 
