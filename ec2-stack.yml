@@ -106,7 +106,9 @@ Resources:
             #!/bin/bash
             export DEBIAN_FRONTEND=noninteractive
             HOME="/home/ssm-user"
+            HOSTNAME="countpool-app"
             NUMCORES=$(($(nproc)*2+1))
+            hostnamectl set-hostname "$HOSTNAME"
             apt-get -y update
             apt-get -y upgrade
             apt-get install python3-pip python3-venv nginx -y
@@ -130,7 +132,8 @@ Resources:
             EOF
             cat << EOF > /etc/nginx/sites-available/countpool
             server {
-              listen 80 default_server;
+              listen 80;
+              server_name $HOSTNAME;
               
               location / {
                   include proxy_params;
