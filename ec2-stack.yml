@@ -108,6 +108,12 @@ Resources:
             HOME="/home/ssm-user"
             HOSTNAME="countpool-app"
             NUMCORES=$(($(nproc)*2+1))
+            useradd -m -d $HOME ssm-user
+            usermod -a -G www-data ssm-user
+            cat << EOF > /etc/sudoers.d/ssm-agent-users
+            # User rules for ssm-user
+            ssm-user ALL=(ALL) NOPASSWD:ALL
+            EOF
             hostnamectl set-hostname "$HOSTNAME"
             apt-get -y update
             apt-get -y upgrade
