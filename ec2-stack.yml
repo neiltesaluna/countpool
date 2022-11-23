@@ -89,79 +89,85 @@ Resources:
           ToPort: 80
           CidrIp: 0.0.0.0/0
 
-# ec2 instance creation
-  ec2CfnInstance:
-    Type: AWS::EC2::Instance
-    Properties: 
-      InstanceType: t2.micro
-      ImageId: ami-09a5c873bc79530d9 # ubuntu server 22.04 LTS (64-bit x86)
-      InstanceInitiatedShutdownBehavior: terminate
-      SubnetId: !Ref ec2CfnSubnet
-      SecurityGroupIds:
-        - !GetAtt containerSecurityGroup.GroupId
-      IamInstanceProfile: !Ref ec2SSMInstanceProfile
-      UserData:
-        Fn::Base64: 
-          !Sub |
-            #!/bin/bash
-            export DEBIAN_FRONTEND=noninteractive
-            HOME="/home/ssm-user"
-            HOSTNAME="countpool-app"
-            NUMCORES=$(($(nproc)*2+1))
-            useradd -m -d $HOME ssm-user
-            usermod -a -G www-data ssm-user
-            cat << EOF > /etc/sudoers.d/ssm-agent-users
-            # User rules for ssm-user
-            ssm-user ALL=(ALL) NOPASSWD:ALL
-            EOF
-            hostnamectl set-hostname "$HOSTNAME"
-            apt-get -y update
-            apt-get -y upgrade
-            apt-get install python3-pip python3-venv nginx -y
-            git clone https://github.com/neiltesaluna/countpool.git $HOME/countpool
-            python3 -m venv $HOME/countpool/.venv
-            $HOME/countpool/.venv/bin/pip install -r $HOME/countpool/requirements.txt
-            cat << EOF > /etc/systemd/system/countpool.service
-            [Unit]
-            Description=Gunicorn instance to serve myproject
-            After=network.target
+# creating resources for ec2 auto scaling
+  ec2LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: !Sub ${AWS::StackName}-launch-template
+      LaunchTemplateData:
+        InstanceType: t2.micro
+        ImageId: ami-09a5c873bc79530d9 # ubuntu server 22.04 LTS (64-bit x86)
+        InstanceInitiatedShutdownBehavior: terminate
+        SecurityGroupIds:
+          - !GetAtt containerSecurityGroup.GroupId
+        IamInstanceProfile: 
+          Name: !Ref ec2SSMInstanceProfile
+        UserData:
+          Fn::Base64: 
+            !Sub |
+              #!/bin/bash
+              export DEBIAN_FRONTEND=noninteractive
+              HOME="/home/ssm-user"
+              HOSTNAME="countpool-app"
+              NUMCORES=$(($(nproc)*2+1))
+              useradd -m -d $HOME ssm-user
+              usermod -a -G www-data ssm-user
+              cat << EOF > /etc/sudoers.d/ssm-agent-users
+              # User rules for ssm-user
+              ssm-user ALL=(ALL) NOPASSWD:ALL
+              EOF
+              hostnamectl set-hostname "$HOSTNAME"
+              apt-get -y update
+              apt-get -y upgrade
+              apt-get install python3-pip python3-venv nginx -y
+              git clone https://github.com/neiltesaluna/countpool.git $HOME/countpool
+              python3 -m venv $HOME/countpool/.venv
+              $HOME/countpool/.venv/bin/pip install -r $HOME/countpool/requirements.txt
+              cat << EOF > /etc/systemd/system/countpool.service
+              [Unit]
+              Description=Gunicorn instance to serve myproject
+              After=network.target
 
-            [Service]
-            User=ssm-user
-            Group=www-data
-            WorkingDirectory=$HOME/countpool/
-            Environment="PATH=$HOME/countpool/.venv/bin"
-            ExecStart=$HOME/countpool/.venv/bin/gunicorn --workers $NUMCORES wsgi:app
+              [Service]
+              User=ssm-user
+              Group=www-data
+              WorkingDirectory=$HOME/countpool/
+              Environment="PATH=$HOME/countpool/.venv/bin"
+              ExecStart=$HOME/countpool/.venv/bin/gunicorn --workers $NUMCORES wsgi:app
 
-            [Install]
-            WantedBy=multi-user.target
-            EOF
-            cat << EOF > /etc/nginx/sites-available/countpool
-            server {
-              listen 80;
-              server_name $HOSTNAME;
-              
-              location / {
-                  include proxy_params;
-                  proxy_pass http://127.0.0.1:8000;
+              [Install]
+              WantedBy=multi-user.target
+              EOF
+              cat << EOF > /etc/nginx/sites-available/countpool
+              server {
+                listen 80;
+                server_name $HOSTNAME;
+                
+                location / {
+                    include proxy_params;
+                    proxy_pass http://127.0.0.1:8000;
+                }
               }
-            }
-            EOF
-            rm /etc/nginx/sites-enabled/default
-            ln -s /etc/nginx/sites-available/countpool /etc/nginx/sites-enabled/
-            systemctl start countpool
-            systemctl enable countpool
-            systemctl restart nginx
+              EOF
+              rm /etc/nginx/sites-enabled/default
+              ln -s /etc/nginx/sites-available/countpool /etc/nginx/sites-enabled/
+              systemctl start countpool
+              systemctl enable countpool
+              systemctl restart nginx
+
+  ec2ASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+      - !Ref ec2CfnSubnet
+      LaunchTemplate:
+        LaunchTemplateId: !Ref ec2LaunchTemplate
+        Version: !GetAtt ec2LaunchTemplate.LatestVersionNumber
+      MaxSize: '1'
+      MinSize: '0'
+      DesiredCapacity: '1'
 
 Outputs:
-  ec2InstanceId:
-    Description: EC2 Instance ID generated from this stack
-    Value: !Ref ec2CfnInstance
-
-  ec2InstancePublicIP:
-    Description: EC2 Instance Public IP generated from this stack
-    Value: !GetAtt ec2CfnInstance.PublicIp
-
   ec2VPCId:
     Description: VPC Id generated from this stack
     Value: !GetAtt ec2CfnVPC.VpcId
@@ -169,7 +175,3 @@ Outputs:
   ec2SubnetId:
     Description: Subnet Id generated from this stack
     Value: !GetAtt ec2CfnSubnet.SubnetId
-
-  ssmawsclicommand:
-    Description: The launch command for awscli using aws ssm
-    Value: !Join ['', ['aws ssm start-session --target ', !Ref ec2CfnInstance]]
