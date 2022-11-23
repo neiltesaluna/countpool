@@ -1,57 +1,22 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "This stack is to generate an EC2 instance where it's accessible using SSM"
 Parameters:
-  AvailabilityZone:
-    Type: String
-    Default: ap-southeast-2a
+  SubnetId1:
+    Description: Subnet 1 Id for EC2 ASG and Loadbalancer resource, we can either reference an existing aws subnet
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-0d8b7c79c168639a9
+
+  SubnetId2:
+    Description: Subnet 2 Id for the Loadbalancer resource, for application load balancers, we need two subnets
+    Type: AWS::EC2::Subnet::Id
+    Default: subnet-0e80b983f84febe4f
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC Id for the stack
+    Default: vpc-000387cf04ba71caf
 
 Resources:
-
-# Creating own VPC, subnet and internet gateway for this stack
-  ec2CfnInternetGateway:
-    Type: AWS::EC2::InternetGateway
-
-  AttachVpctoGateway:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      VpcId: !GetAtt ec2CfnVPC.VpcId
-      InternetGatewayId: !GetAtt ec2CfnInternetGateway.InternetGatewayId
-
-  ec2CfnVPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      CidrBlock: 172.16.0.0/16
-      EnableDnsSupport: 'true'
-      EnableDnsHostnames: 'true'
-
-  ec2CfnSubnet:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId:  !Ref ec2CfnVPC
-      CidrBlock: 172.16.0.0/24
-      MapPublicIpOnLaunch: 'true'
-      AvailabilityZone: !Ref AvailabilityZone
-
-  # Some route tables for our subnets:
-  ec2PublicRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref ec2CfnVPC
-
-  ec2PublicRoute:
-    Type: AWS::EC2::Route
-    DependsOn: AttachVpctoGateway
-    Properties:
-      RouteTableId: !Ref ec2PublicRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref ec2CfnInternetGateway
-
-  ec2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref ec2CfnSubnet
-      RouteTableId: !Ref ec2PublicRouteTable
-
 # creating ssm access role and security groups for ec2 instance
   ec2SSMRole:
     Type: 'AWS::IAM::Role'
@@ -77,19 +42,82 @@ Resources:
       Roles:
         - !Ref ec2SSMRole
 
+# creating security groups for EC2 instance and load balancer
   containerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupName: !Sub ${AWS::StackName}-sg
       GroupDescription: Security group for ec2-instance
-      VpcId: !Ref ec2CfnVPC
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourceSecurityGroupId: !GetAtt loadBalancerSecurityGroup.GroupId
+
+  loadBalancerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${AWS::StackName}-loadbalancer-sg
+      GroupDescription: !Sub "Security group for ${AWS::StackName} load balancer cloudformation stack"
+      VpcId: !Ref VpcId
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
 
+# creating aplication load balancer for ec2 auto scaling group
+  Ec2LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub ${AWS::StackName}-loadbalancer
+      Type: application
+      Scheme: internet-facing
+      SecurityGroups:
+        - !GetAtt loadBalancerSecurityGroup.GroupId
+      Subnets: # referencing the public subnet, application load balancers need two subnets
+        - !Ref SubnetId1
+        - !Ref SubnetId2
+
+  Ec2Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties: 
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref Ec2TargetGroup
+      LoadBalancerArn: !Ref Ec2LoadBalancer
+
+  Ec2TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckEnabled: true
+      Name: !Sub ${AWS::StackName}-target-group
+      VpcId: !Ref VpcId
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 30
+      Protocol: HTTP
+      Port: 80
+
 # creating resources for ec2 auto scaling
+  ec2ASG:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+        - !Ref SubnetId1
+        - !Ref SubnetId2
+      LaunchTemplate:
+        LaunchTemplateId: !Ref ec2LaunchTemplate
+        Version: !GetAtt ec2LaunchTemplate.LatestVersionNumber
+      MaxSize: '1'
+      MinSize: '0'
+      DesiredCapacity: '1'
+      TargetGroupARNs:
+        - !Ref Ec2TargetGroup
+
   ec2LaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
@@ -156,23 +184,7 @@ Resources:
               systemctl enable countpool
               systemctl restart nginx
 
-  ec2ASG:
-    Type: AWS::AutoScaling::AutoScalingGroup
-    Properties:
-      VPCZoneIdentifier:
-      - !Ref ec2CfnSubnet
-      LaunchTemplate:
-        LaunchTemplateId: !Ref ec2LaunchTemplate
-        Version: !GetAtt ec2LaunchTemplate.LatestVersionNumber
-      MaxSize: '1'
-      MinSize: '0'
-      DesiredCapacity: '1'
-
 Outputs:
-  ec2VPCId:
-    Description: VPC Id generated from this stack
-    Value: !GetAtt ec2CfnVPC.VpcId
-
-  ec2SubnetId:
-    Description: Subnet Id generated from this stack
-    Value: !GetAtt ec2CfnSubnet.SubnetId
+  LoadBalancerDNS:
+    Description: The DNS name for the load balancer where we can use to visit the website
+    Value: !GetAtt Ec2LoadBalancer.DNSName
