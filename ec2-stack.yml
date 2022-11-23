@@ -126,7 +126,7 @@ Resources:
               cat << EOF > /etc/systemd/system/countpool.service
               [Unit]
               Description=Gunicorn instance to serve myproject
-              After=network.target
+              ConditionPathExists=$HOME/countpool/.venv/bin/gunicorn
 
               [Service]
               User=ssm-user
@@ -134,6 +134,7 @@ Resources:
               WorkingDirectory=$HOME/countpool/
               Environment="PATH=$HOME/countpool/.venv/bin"
               ExecStart=$HOME/countpool/.venv/bin/gunicorn --workers $NUMCORES wsgi:app
+              Restart=on-failure
 
               [Install]
               WantedBy=multi-user.target
