@@ -15,6 +15,26 @@ Parameters:
     Type: AWS::EC2::VPC::Id
     Description: VPC Id for the stack
     Default: vpc-000387cf04ba71caf
+  
+  DBName:
+    Type: String
+    Description: Name of the database for the DB instance (MySQL)
+    Default: countpooldb
+
+  DBMasterUsername:
+    Type: String
+    Description: Username for the DB instance
+    Default: dbrootuser
+  
+  DBMasterPassword:
+    Type: String
+    Description: User password for the DB instance
+    Default: dbrootpassword
+
+  AppSecretKey:
+    Type: String
+    Description: Secret key for application
+    Default: 6a9d627e3641cabd6e54740b019d3a40
 
 Resources:
 # creating ssm access role and security groups for ec2 instance
@@ -42,11 +62,11 @@ Resources:
       Roles:
         - !Ref ec2SSMRole
 
-# creating security groups for EC2 instance and load balancer
+# creating security groups for EC2 instance, RDS and load balancer
   containerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub ${AWS::StackName}-sg
+      GroupName: !Sub ${AWS::StackName}-container-sg
       GroupDescription: Security group for ec2-instance
       VpcId: !Ref VpcId
       SecurityGroupIngress:
@@ -66,6 +86,18 @@ Resources:
           FromPort: 80
           ToPort: 80
           CidrIp: 0.0.0.0/0
+
+  RdsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${AWS::StackName}-rds-sg
+      GroupDescription: Security group for rds instance
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306 
+          ToPort: 3306
+          SourceSecurityGroupId: !GetAtt containerSecurityGroup.GroupId
 
 # creating aplication load balancer for ec2 auto scaling group
   Ec2LoadBalancer:
@@ -102,9 +134,33 @@ Resources:
       Protocol: HTTP
       Port: 80
 
+# creating RDS for ec2 instance and subnet group to run rds on same vpc
+  mySqlRds:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      VPCSecurityGroups:
+      - Ref: RdsSecurityGroup
+      DBSubnetGroupName: !Ref mySqlRdsSubnetGroup
+      AllocatedStorage: '5'
+      DBInstanceClass: db.t2.small
+      Engine: MySQL
+      DBName: !Ref DBName
+      MasterUsername: !Ref DBMasterUsername
+      MasterUserPassword: !Ref DBMasterPassword
+    # DeletionPolicy: Snapshot
+
+  mySqlRdsSubnetGroup: 
+    Type: AWS::RDS::DBSubnetGroup
+    Properties: 
+      DBSubnetGroupDescription: Subnet group for Rds instance 
+      SubnetIds: 
+        - !Ref SubnetId1
+        - !Ref SubnetId2
+
 # creating resources for ec2 auto scaling
   ec2ASG:
     Type: AWS::AutoScaling::AutoScalingGroup
+    DependsOn: mySqlRds
     Properties:
       VPCZoneIdentifier:
         - !Ref SubnetId1
@@ -131,8 +187,8 @@ Resources:
         IamInstanceProfile: 
           Name: !Ref ec2SSMInstanceProfile
         UserData:
-          Fn::Base64: 
-            !Sub |
+          Fn::Base64: !Sub
+            - |
               #!/bin/bash
               export DEBIAN_FRONTEND=noninteractive
               HOME="/home/ssm-user"
@@ -159,6 +215,12 @@ Resources:
               [Service]
               User=ssm-user
               Group=www-data
+              Environment="MYSQL_DATABASE=${dbname}"
+              Environment="MYSQL_USER=${dbuser}"
+              Environment="MYSQL_PASSWORD=${dbpassword}"
+              Environment="MYSQL_PORT=${dbport}"
+              Environment="MYSQL_HOST=${dbhost}"
+              Environment="SECRET_KEY=${appsecret}"
               WorkingDirectory=$HOME/countpool/
               Environment="PATH=$HOME/countpool/.venv/bin"
               ExecStart=$HOME/countpool/.venv/bin/gunicorn --workers $NUMCORES wsgi:app
@@ -183,6 +245,13 @@ Resources:
               systemctl start countpool
               systemctl enable countpool
               systemctl restart nginx
+
+            - dbname: !Ref DBName
+              dbport: 3306
+              dbuser: !Ref DBMasterUsername
+              dbpassword: !Ref DBMasterPassword
+              dbhost: !GetAtt mySqlRds.Endpoint.Address
+              appsecret: !Ref AppSecretKey
 
 Outputs:
   LoadBalancerDNS:
