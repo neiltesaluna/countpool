@@ -161,6 +161,12 @@ Resources:
   ec2ASG:
     Type: AWS::AutoScaling::AutoScalingGroup
     DependsOn: mySqlRds
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MaxBatchSize: '1'
+        MinInstancesInService: '1'
+        PauseTime: PT10M
+        WaitOnResourceSignals: true
     Properties:
       VPCZoneIdentifier:
         - !Ref SubnetId1
