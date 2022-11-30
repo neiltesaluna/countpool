@@ -28,13 +28,13 @@ In the countpool/\_\_init\_\_.py file, we need to change the SQLALCHEMY_DATABASE
 
 `SQLALCHEMY_DATABASE_URI = sqlite:///database.db`
 
-# Installation with MySQL database image
-## DOCKER COMPOSE
+
+## DOCKER COMPOSE - Installation to use MySQL database image
 After setting up the .env file, to run this project using docker compose, in your terminal enter:<br />
 `docker compose up`
 
 
-## DOCKER
+## DOCKER - Installation to use local SQLite database
 First set up the application to use an **SQLite database**, then run the following commands below. <br />
 
 To run this project using docker, in your terminal enter to build the docker image:<br />
