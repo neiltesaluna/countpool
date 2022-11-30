@@ -1,7 +1,13 @@
 name: Deploy ec2 cfn stack
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs: 
+      no-fail-on-empty-changeset:
+      description: "If the CloudFormation change set is empty, do not fail. Defaults to '0' (will fail on empty change set)"
+      required: true
+      default: "1"
+    
   # push:
   #   branches: [ "master" ]
 
