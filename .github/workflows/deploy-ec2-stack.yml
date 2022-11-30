@@ -32,15 +32,11 @@ jobs:
    
     - name: Deploy to AWS CloudFormation
       uses: aws-actions/aws-cloudformation-github-deploy@v1
-      inputs: 
-        no-fail-on-empty-changeset:
-        description: "If the CloudFormation change set is empty, do not fail. Defaults to '0' (will fail on empty change set)"
-        required: true
-        default: "1"
       with:
         name: ${{ env.CFN_STACKNAME }}
         template: ${{ env.CFN_TEMPLATEFILE }}
         capabilities: 'CAPABILITY_IAM'
+        no-fail-on-empty-changeset: "1"
         parameter-overrides: "AppSecretKey=${{ secrets.FLASK_APP_SECRET }},\
         DBMasterUsername=${{ secrets.DB_USERNAME }},\
         DBMasterPassword=${{ secrets.DB_PASSWORD }}"
