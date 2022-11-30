@@ -1,0 +1,42 @@
+name: Deploy ec2 cfn stack
+
+on:
+  workflow_dispatch
+  # push:
+  #   branches: [ "master" ]
+
+env:
+  AWS_REGION: ap-southeast-2             # set this to your preferred AWS region, e.g. us-west-1
+  CFN_STACKNAME: countpool-stack
+  CFN_TEMPLATEFILE: ec2-stack.yml
+
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+   
+    - name: Deploy to AWS CloudFormation
+      uses: aws-actions/aws-cloudformation-github-deploy@v1
+      with:
+        name: ${{ env.CFN_STACKNAME }}
+        template: ${{ env.CFN_TEMPLATEFILE }}
+        capabilities: 'CAPABILITY_IAM'
+        parameter-overrides: "AppSecretKey=${{ secrets.FLASK_APP_SECRET }},\
+        DBMasterUsername=${{ secrets.DB_USERNAME }},\
+        DBMasterPassword=${{ secrets.DB_PASSWORD }}"
