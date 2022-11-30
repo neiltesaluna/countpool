@@ -1,13 +1,7 @@
 name: Deploy ec2 cfn stack
 
 on:
-  workflow_dispatch:
-    inputs: 
-      no-fail-on-empty-changeset:
-      description: "If the CloudFormation change set is empty, do not fail. Defaults to '0' (will fail on empty change set)"
-      required: true
-      default: "1"
-    
+  workflow_dispatch
   # push:
   #   branches: [ "master" ]
 
@@ -38,6 +32,11 @@ jobs:
    
     - name: Deploy to AWS CloudFormation
       uses: aws-actions/aws-cloudformation-github-deploy@v1
+      inputs: 
+        no-fail-on-empty-changeset:
+        description: "If the CloudFormation change set is empty, do not fail. Defaults to '0' (will fail on empty change set)"
+        required: true
+        default: "1"
       with:
         name: ${{ env.CFN_STACKNAME }}
         template: ${{ env.CFN_TEMPLATEFILE }}
