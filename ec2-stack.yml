@@ -142,7 +142,7 @@ Resources:
       - Ref: RdsSecurityGroup
       DBSubnetGroupName: !Ref mySqlRdsSubnetGroup
       AllocatedStorage: '5'
-      DBInstanceClass: db.t2.small
+      DBInstanceClass: db.t2.micro
       Engine: MySQL
       DBName: !Ref DBName
       MasterUsername: !Ref DBMasterUsername
