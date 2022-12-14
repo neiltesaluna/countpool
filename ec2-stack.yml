@@ -130,7 +130,6 @@ Resources:
 # creating resources for ec2 auto scaling
   ec2ASG:
     Type: AWS::AutoScaling::AutoScalingGroup
-    DependsOn: mySqlRds
     UpdatePolicy:
       AutoScalingRollingUpdate:
         MaxBatchSize: '1'
