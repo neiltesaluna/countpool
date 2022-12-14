@@ -31,6 +31,11 @@ Parameters:
     Description: User password for the DB instance
     Default: dbrootpassword
 
+  DBEndPoint:
+    Type: String
+    Description: Rds instance endpoint
+    Default: dburl
+
   AppSecretKey:
     Type: String
     Description: Secret key for application
@@ -221,7 +226,7 @@ Resources:
               dbport: 3306
               dbuser: !Ref DBMasterUsername
               dbpassword: !Ref DBMasterPassword
-              dbhost: !GetAtt mySqlRds.Endpoint.Address
+              dbhost: !Ref DBEndPoint
               appsecret: !Ref AppSecretKey
 
 Outputs:
