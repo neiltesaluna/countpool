@@ -39,4 +39,6 @@ jobs:
         no-fail-on-empty-changeset: "1"
         parameter-overrides: "AppSecretKey=${{ secrets.FLASK_APP_SECRET }},\
         DBMasterUsername=${{ secrets.DB_USERNAME }},\
-        DBMasterPassword=${{ secrets.DB_PASSWORD }}"
+        DBMasterPassword=${{ secrets.DB_PASSWORD }},\
+        DBName=${{ secrets.DB_Name }},\
+        DBEndPoint=${{ secrets.DB_HOST }}"
