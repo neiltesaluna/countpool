@@ -87,18 +87,6 @@ Resources:
           ToPort: 80
           CidrIp: 0.0.0.0/0
 
-  RdsSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupName: !Sub ${AWS::StackName}-rds-sg
-      GroupDescription: Security group for rds instance
-      VpcId: !Ref VpcId
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 3306 
-          ToPort: 3306
-          SourceSecurityGroupId: !GetAtt containerSecurityGroup.GroupId
-
 # creating aplication load balancer for ec2 auto scaling group
   Ec2LoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
@@ -133,29 +121,6 @@ Resources:
           Value: 30
       Protocol: HTTP
       Port: 80
-
-# creating RDS for ec2 instance and subnet group to run rds on same vpc
-  mySqlRds:
-    Type: AWS::RDS::DBInstance
-    Properties:
-      VPCSecurityGroups:
-      - Ref: RdsSecurityGroup
-      DBSubnetGroupName: !Ref mySqlRdsSubnetGroup
-      AllocatedStorage: '5'
-      DBInstanceClass: db.t2.micro
-      Engine: MySQL
-      DBName: !Ref DBName
-      MasterUsername: !Ref DBMasterUsername
-      MasterUserPassword: !Ref DBMasterPassword
-    # DeletionPolicy: Snapshot
-
-  mySqlRdsSubnetGroup: 
-    Type: AWS::RDS::DBSubnetGroup
-    Properties: 
-      DBSubnetGroupDescription: Subnet group for Rds instance 
-      SubnetIds: 
-        - !Ref SubnetId1
-        - !Ref SubnetId2
 
 # creating resources for ec2 auto scaling
   ec2ASG:
